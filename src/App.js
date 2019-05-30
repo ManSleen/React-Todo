@@ -11,64 +11,83 @@ class App extends React.Component {
     this.state = {
       todos: [
         {
-          task: "some task",
-          id: 2,
+          task: "Organize Garage",
+          id: 1528817077286,
+          completed: false
+        },
+        {
+          task: "Bake Cookies",
+          id: 1528817084358,
           completed: false
         }
       ],
-      task: "",
-      id: "",
-      completed: false
+      taskInput: ""
     };
   }
 
-  addTodo = event => {
-    event.preventDefault();
-    const newTodo = {
-      task: this.state.name,
+  addTodo = e => {
+    const newItem = {
+      task: this.state.taskInput,
       id: Date.now(),
-      completed: this.state.completed
+      completed: false
     };
-
-    this.setState({
-      todos: [...this.state.todos, newTodo],
-      name: ""
+    e.preventDefault();
+    this.setState(prevState => {
+      return {
+        todos: [...prevState.todos, newItem],
+        taskInput: ""
+      };
     });
   };
 
-  handleChanges = event => {
-    event.preventDefault();
+  handleChanges = e => {
+    e.preventDefault();
+
     this.setState({
-      [event.target.name]: event.target.value
+      [e.target.name]: e.target.value
     });
   };
 
-  toggleComplete = event => {
-    event.preventDefault();
-    console.log(event.target.id);
-
-    this.state.todos.forEach(el => {
-      el.completed = !el.completed;
+  toggleComplete = id => {
+    this.setState(prevState => {
+      return {
+        todos: prevState.todos.map(item => {
+          if (item.id === id) {
+            return {
+              ...item,
+              completed: !item.completed
+            };
+          } else {
+            return item;
+          }
+        })
+      };
     });
+  };
 
-    // this.state.todos.forEach(el => (el.completed = !el.completed));
-    // console.log(this.state.todos);
-    // console.log(event.target.id);
-    this.setState({});
+  clearCompleted = e => {
+    console.log("Clicked clear completed!");
+    this.setState(prevState => {
+      return {
+        todos: prevState.todos.filter(item => item.completed === false)
+      };
+    });
   };
 
   render() {
     return (
       <div>
         <h1>Todo List App</h1>
+
         <TodoList
-          todos={this.state.todos}
           toggleComplete={this.toggleComplete}
+          todos={this.state.todos}
         />
         <TodoForm
-          name={this.state.name}
+          taskInput={this.state.taskInput}
           handleChanges={this.handleChanges}
           addTodo={this.addTodo}
+          clearCompleted={this.clearCompleted}
         />
       </div>
     );
